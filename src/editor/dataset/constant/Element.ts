@@ -97,6 +97,13 @@ export const TITLE_CONTEXT_ATTR: Array<keyof IElement> = [
   'titleId',
   'title'
 ]
+export const PARAGRAPH_CONTEXT_ATTR: Array<keyof IElement> = [
+  'r',
+  'id',
+  'value',
+  'type'
+]
+
 
 export const LIST_CONTEXT_ATTR: Array<keyof IElement> = [
   'listId',
@@ -122,7 +129,8 @@ export const CONTROL_STYLE_ATTR: Array<keyof IControlStyle> = [
 export const EDITOR_ELEMENT_CONTEXT_ATTR: Array<keyof IElement> = [
   ...TABLE_CONTEXT_ATTR,
   ...TITLE_CONTEXT_ATTR,
-  ...LIST_CONTEXT_ATTR
+  ...LIST_CONTEXT_ATTR,
+  ...PARAGRAPH_CONTEXT_ATTR
 ]
 
 export const TEXTLIKE_ELEMENT_TYPE: ElementType[] = [
@@ -131,7 +139,7 @@ export const TEXTLIKE_ELEMENT_TYPE: ElementType[] = [
   ElementType.SUBSCRIPT,
   ElementType.SUPERSCRIPT,
   ElementType.CONTROL,
-  ElementType.DATE
+  ElementType.DATE,
 ]
 
 export const IMAGE_ELEMENT_TYPE: ElementType[] = [
@@ -150,5 +158,6 @@ export const INLINE_NODE_NAME: string[] = ['HR', 'TABLE', 'UL', 'OL']
 
 export const VIRTUAL_ELEMENT_TYPE: ElementType[] = [
   ElementType.TITLE,
-  ElementType.LIST
+  ElementType.LIST,
+  ElementType.PARAGRAPH
 ]

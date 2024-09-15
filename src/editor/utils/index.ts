@@ -258,6 +258,7 @@ export function cloneProperty<T>(
 ) {
   for (let i = 0; i < properties.length; i++) {
     const property = properties[i]
+    if (property === 'value') continue
     const value = sourceElement[property]
     if (value !== undefined) {
       targetElement[property] = value

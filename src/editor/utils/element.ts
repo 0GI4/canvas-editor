@@ -97,7 +97,37 @@ export function formatElementList(
   while (i < elementList.length) {
     let el = elementList[i]
     // 优先处理虚拟元素
-    if (el.type === ElementType.TITLE) {
+
+    if (el.type === ElementType.PARAGRAPH) {
+      elementList.splice(i, 1)
+
+      const valueList = el.r || []
+      formatElementList(valueList, {
+        ...options,
+        isHandleFirstElement: false,
+        isForceCompensation: false
+      })
+
+      if (valueList.length) {
+        for (let v = 0; v < valueList.length; v++) {
+          const value = valueList[v]
+
+          if (isTextLikeElement(value)) {
+            if (value.bold === undefined) {
+              value.bold = false
+            }
+          }
+          elementList.splice(i, 0, value)
+          i++
+        }
+
+        elementList.splice(i, 0, {
+          value: ZERO
+        })
+        i++
+      }
+      i--
+    } else if (el.type === ElementType.TITLE) {
       // 移除父节点
       elementList.splice(i, 1)
       // 格式化元素
@@ -729,34 +759,49 @@ export function zipElementList(
       }
     }
     // 组合元素
-    const pickElement = pickElementAttr(element, { extraPickAttrs })
-    if (
-      !element.type ||
-      element.type === ElementType.TEXT ||
-      element.type === ElementType.SUBSCRIPT ||
-      element.type === ElementType.SUPERSCRIPT
-    ) {
-      while (e < elementList.length) {
-        const nextElement = elementList[e + 1]
-        e++
-        if (
-          nextElement &&
-          isSameElementExceptValue(
-            pickElement,
-            pickElementAttr(nextElement, { extraPickAttrs })
-          )
-        ) {
-          const nextValue =
-            nextElement.value === ZERO ? '\n' : nextElement.value
-          pickElement.value += nextValue
-        } else {
-          break
-        }
+    // const pickElement = pickElementAttr(element, { extraPickAttrs })
+    const id = element.id
+
+    // Инициализируем объект с атрибутами текущего элемента
+    const rItem = pickElementAttr(element, { extraPickAttrs })
+    let combinedValue = rItem.value // Инициализируем строку для объединения значений
+    let nextIndex = e + 1
+
+    // Проверяем, есть ли уже элемент с таким id
+    const existingElement = zipElementListData.find(el => el.id === id)
+
+    // Объединяем последовательные элементы с одинаковыми атрибутами
+    while (nextIndex < elementList.length) {
+      const nextElement = elementList[nextIndex]
+      const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
+
+      // Проверяем, совпадают ли атрибуты, кроме значения
+      if (nextRItem.size === rItem.size && nextRItem.bold === rItem.bold) {
+        combinedValue += nextRItem.value // Объединяем значения
+        e++ // Увеличиваем индекс, чтобы пропустить этот элемент
+      } else {
+        break // Если атрибуты разные, прерываем цикл
       }
-    } else {
-      e++
+
+      nextIndex++
     }
-    zipElementListData.push(pickElement)
+
+    rItem.value = combinedValue
+
+    if (existingElement) {
+      existingElement.r?.push(rItem)
+    } else {
+      const newElement = {
+        type: ElementType.PARAGRAPH,
+        id,
+        r: [rItem],
+        v: [],
+        value: ''
+      }
+
+      zipElementListData.push(newElement)
+    }
+    e++
   }
   return zipElementListData
 }

@@ -18,7 +18,8 @@ enum ElementType {
   DATE = 'date',
   BLOCK = 'block',
   TITLE = 'title',
-  LIST = 'list'
+  LIST = 'list',
+  PARAGRAPH = 'paragraph'
 }
 
 enum TitleLevel {
@@ -45,7 +46,8 @@ const TEXTLIKE_ELEMENT_TYPE: ElementType[] = [
   ElementType.SUBSCRIPT,
   ElementType.SUPERSCRIPT,
   ElementType.CONTROL,
-  ElementType.DATE
+  ElementType.DATE,
+  ElementType.PARAGRAPH
 ]
 
 const ZERO = '\u200B'

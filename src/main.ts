@@ -1733,7 +1733,8 @@ window.onload = function () {
   }
   instance.listener.contentChange = debounce(handleContentChange, 200)
   handleContentChange()
-
+  debugger
+  console.log(instance.command.getValue())
   instance.listener.saved = function (payload) {
     console.log('elementList: ', payload)
   }

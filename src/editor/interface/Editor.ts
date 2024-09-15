@@ -84,6 +84,7 @@ export interface IEditorOption {
   radio?: IRadioOption
   cursor?: ICursorOption
   title?: ITitleOption
+  // paragraph?: IParagraphOption
   placeholder?: IPlaceholder
   group?: IGroup
   pageBreak?: IPageBreak

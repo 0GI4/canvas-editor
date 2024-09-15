@@ -43,6 +43,7 @@ export function input(data: string, host: CanvasEvent) {
       if (
         !copyElement.type ||
         copyElement.type === TEXT ||
+        copyElement.type === ElementType.PARAGRAPH ||
         (copyElement.type === HYPERLINK && nextElement?.type === HYPERLINK) ||
         (copyElement.type === DATE && nextElement?.type === DATE) ||
         (copyElement.type === SUBSCRIPT && nextElement?.type === SUBSCRIPT) ||
@@ -51,7 +52,12 @@ export function input(data: string, host: CanvasEvent) {
         EDITOR_ELEMENT_COPY_ATTR.forEach(attr => {
           // 在分组外无需复制分组信息
           if (attr === 'groupIds' && !nextElement?.groupIds) return
+          if (attr === 'type' && copyElement.type !== newElement.type) return
+
+          // Исключаем копирование идентификатора, если требуется уникальный элемент
+          if (attr === 'id') return
           const value = copyElement[attr] as never
+
           if (value !== undefined) {
             newElement[attr] = value
           }

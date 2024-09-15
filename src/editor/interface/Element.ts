@@ -43,6 +43,25 @@ export interface IElementGroup {
   groupIds?: string[]
 }
 
+export interface IParagraph {
+  id?: string | undefined
+  v?: string[] // ID вариативностей
+  r?: IElement[] // Элементы (runs) внутри параграфа
+  size?: number
+  bold?: boolean
+  spacing?: {
+    before?: number
+    after?: number
+  }
+  rowFlex?: RowFlex // Дополнительные стили параграфа
+}
+
+// Элемент параграфа
+export interface IParagraphElement {
+  r: IElement[] 
+}
+
+
 export interface ITitleElement {
   valueList?: IElement[]
   level?: TitleLevel
@@ -140,7 +159,8 @@ export type IElement = IElementBasic &
   IImageElement &
   IBlockElement &
   ITitleElement &
-  IListElement
+  IListElement &
+  IParagraph
 
 export interface IElementMetrics {
   width: number
