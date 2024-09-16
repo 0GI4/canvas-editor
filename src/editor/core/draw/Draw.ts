@@ -1104,6 +1104,7 @@ export class Draw {
   }
 
   public setValue(payload: Partial<IEditorData>, options?: ISetValueOption) {
+    debugger
     const { header, main, footer } = deepClone(payload)
     if (!header && !main && !footer) return
     const { isSetCursor = false } = options || {}

@@ -77,7 +77,6 @@ window.onload = function () {
       capture: true
     }
   )
-
   // 2. | 撤销 | 重做 | 格式刷 | 清除格式 |
   const undoDom = document.querySelector<HTMLDivElement>('.menu-item__undo')!
   undoDom.title = `撤销(${isApple ? '⌘' : 'Ctrl'}+Z)`
@@ -1733,9 +1732,12 @@ window.onload = function () {
   }
   instance.listener.contentChange = debounce(handleContentChange, 200)
   handleContentChange()
-  debugger
-  console.log(instance.command.getValue())
+
+
+
   instance.listener.saved = function (payload) {
+    debugger
+    instance.command.getValue()
     console.log('elementList: ', payload)
   }
 

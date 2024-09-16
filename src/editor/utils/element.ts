@@ -579,6 +579,10 @@ export function zipElementList(
       e++
       continue
     }
+    else if(element.value === '\n' || element.value === ZERO || !element.value) {
+      e++
+      continue
+    }
     // 优先处理虚拟元素，后表格、超链接、日期、控件特殊处理
     if (element.titleId && element.level) {
       // 标题处理
@@ -761,9 +765,9 @@ export function zipElementList(
     // 组合元素
     // const pickElement = pickElementAttr(element, { extraPickAttrs })
     const id = element.id
-
     // Инициализируем объект с атрибутами текущего элемента
     const rItem = pickElementAttr(element, { extraPickAttrs })
+    // if (rItem.value === '\n') continue
     let combinedValue = rItem.value // Инициализируем строку для объединения значений
     let nextIndex = e + 1
 

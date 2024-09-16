@@ -11,13 +11,13 @@ elementList.push({
   value: '',
   id: 'para1',
   r: [
-    {
-      value: 'This is the first part of the paragraph.',
-      size: 16,
-      id: '1'
-    },
-    { value: 'And this is the second part.', size: 16, bold: true, id: '1' },
-    { value: 'And this is the second part.', size: 18, id: '1' }
+    // {
+    //   value: 'This is the first part of the paragraph.',
+    //   size: 16,
+    //   id: '1'
+    // },
+    // { value: 'And this is the second part.', size: 16, bold: true, id: '1' },
+    { value: '1', size: 18, id: '1' }
   ]
 })
 elementList.push({
@@ -26,12 +26,13 @@ elementList.push({
   id: 'para2',
   v: [],
   r: [
-    {
-      value: 'This is the first part of the paragraph.',
-      size: 16,
-      id: '2'
-    },
-    { value: 'And this is the second part.', size: 20, bold: true, id: '2' }
+    // {
+    //   value: 'This is the first part of the paragraph.',
+    //   size: 16,
+    //   id: '2'
+    // },
+    // { value: 'And this is the second part.', size: 20, bold: true, id: '2' }
+    { value: '2', size: 20, bold: true, id: '2' }
   ]
 })
 export const data: IElement[] = elementList
