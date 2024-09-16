@@ -578,8 +578,11 @@ export function zipElementList(
     ) {
       e++
       continue
-    }
-    else if(element.value === '\n' || element.value === ZERO || !element.value) {
+    } else if (
+      element.value === '\n' ||
+      element.value === ZERO ||
+      !element.value
+    ) {
       e++
       continue
     }
@@ -764,7 +767,7 @@ export function zipElementList(
     }
     // 组合元素
     // const pickElement = pickElementAttr(element, { extraPickAttrs })
-    const id = element.id
+    const id = element.id || getUUID()
     // Инициализируем объект с атрибутами текущего элемента
     const rItem = pickElementAttr(element, { extraPickAttrs })
     // if (rItem.value === '\n') continue
@@ -780,7 +783,7 @@ export function zipElementList(
       const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
 
       // Проверяем, совпадают ли атрибуты, кроме значения
-      if (nextRItem.size === rItem.size && nextRItem.bold === rItem.bold) {
+      if (nextRItem.size === rItem.size && nextRItem.bold === rItem.bold && nextRItem.value !== '\n') {
         combinedValue += nextRItem.value // Объединяем значения
         e++ // Увеличиваем индекс, чтобы пропустить этот элемент
       } else {
