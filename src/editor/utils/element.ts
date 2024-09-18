@@ -585,6 +585,17 @@ export function zipElementList(
     ) {
       e++
       continue
+    } else if (element.titleId && !element.level) {
+      let value = ''
+      while (elementList[e]) {
+        value += elementList[e].value
+        e++
+      }
+      const titleValueListElement = {
+        value
+      }
+      zipElementListData.push(titleValueListElement)
+      continue
     }
     // 优先处理虚拟元素，后表格、超链接、日期、控件特殊处理
     if (element.titleId && element.level) {
@@ -681,7 +692,7 @@ export function zipElementList(
           }
         }
       }
-    } else if (element.type === ElementType.HYPERLINK) {
+    } else if (element.hyperlinkId && element.url) {
       // 超链接处理
       const hyperlinkId = element.hyperlinkId
       if (hyperlinkId) {
@@ -705,6 +716,19 @@ export function zipElementList(
         hyperlinkElement.valueList = zipElementList(valueList, options)
         element = hyperlinkElement
       }
+    } else if (element.hyperlinkId && !element.url) {
+      let value = ''
+      while (elementList[e]) {
+        value += elementList[e].value
+        e++
+      }
+      // добавить копирование свойств и аттрибутов
+      // и сделать проверку на разные аттрибуты для разибития на элементы
+      const hyperLinkValueListElement = {
+        value
+      }
+      zipElementListData.push(hyperLinkValueListElement)
+      continue
     } else if (element.type === ElementType.DATE) {
       const dateId = element.dateId
       if (dateId) {
@@ -767,12 +791,26 @@ export function zipElementList(
     }
     // 组合元素
     // const pickElement = pickElementAttr(element, { extraPickAttrs })
-    const id = element.id || getUUID()
+    let nextIndex = e + 1
+    let id : string | undefined
+
+    if (element.id) {
+      id = element.id
+    } else if (
+      element.valueList &&
+      elementList[e - element.valueList[0].value?.length - 1]?.value === ZERO
+    ) {
+      id = getUUID()
+    } else if (e > 0 && elementList[e - 1].value !== ZERO) {
+      id = zipElementListData[zipElementListData.length - 1].id
+    } else {
+      id = getUUID()
+    }
+
     // Инициализируем объект с атрибутами текущего элемента
     const rItem = pickElementAttr(element, { extraPickAttrs })
     // if (rItem.value === '\n') continue
     let combinedValue = rItem.value // Инициализируем строку для объединения значений
-    let nextIndex = e + 1
 
     // Проверяем, есть ли уже элемент с таким id
     const existingElement = zipElementListData.find(el => el.id === id)
@@ -783,7 +821,11 @@ export function zipElementList(
       const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
 
       // Проверяем, совпадают ли атрибуты, кроме значения
-      if (nextRItem.size === rItem.size && nextRItem.bold === rItem.bold && nextRItem.value !== '\n') {
+      if (
+        nextRItem.size === rItem.size &&
+        nextRItem.bold === rItem.bold &&
+        nextRItem.value !== '\n'
+      ) {
         combinedValue += nextRItem.value // Объединяем значения
         e++ // Увеличиваем индекс, чтобы пропустить этот элемент
       } else {
