@@ -7,6 +7,31 @@ import { ElementType, IEditorOption, IElement } from './editor'
 const elementList: IElement[] = []
 
 elementList.push({
+  type: ElementType.TABLE,
+  value: '',
+  height: 42,
+  width: 554,
+  colgroup: [
+    { width: 138.5 },
+    { width: 138.5 },
+    { width: 138.5 },
+    { width: 138.5 }
+  ],
+  trList: [
+    {
+      height: 42,
+      minHeight: 42,
+      tdList: [
+        { colspan: 1, rowspan: 1, value: [{ value: '1' }] },
+        { colspan: 1, rowspan: 1, value: [{ value: '2' }] },
+        { colspan: 1, rowspan: 1, value: [{ value: '3' }] },
+        { colspan: 1, rowspan: 1, value: [{ value: '4' }] }
+      ]
+    }
+  ]
+})
+
+elementList.push({
   type: ElementType.PARAGRAPH,
   value: '',
   id: 'para1',

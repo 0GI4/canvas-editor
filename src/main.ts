@@ -1736,7 +1736,6 @@ window.onload = function () {
 
 
   instance.listener.saved = function (payload) {
-    debugger
     instance.command.getValue()
     console.log('elementList: ', payload)
   }

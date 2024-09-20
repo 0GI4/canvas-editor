@@ -579,22 +579,61 @@ export function zipElementList(
       e++
       continue
     } else if (
-      element.value === '\n' ||
-      element.value === ZERO ||
-      !element.value
+      (element.value === '\n' || element.value === ZERO || !element.value) &&
+      !element.type
     ) {
+      // доделать проверку на пустой параграф
+      // const newElement = {
+      //   type: ElementType.PARAGRAPH,
+      //   id: element.id,
+      //   r: [],
+      //   v: [],
+      //   value: ''}
+      //   zipElementListData.push(newElement)
       e++
       continue
     } else if (element.titleId && !element.level) {
-      let value = ''
+      const valueListItem = pickElementAttr(element, { extraPickAttrs })
+      let combinedValueListItems = ''
       while (elementList[e]) {
-        value += elementList[e].value
+        combinedValueListItems += elementList[e].value
         e++
       }
       const titleValueListElement = {
-        value
+        ...valueListItem,
+        value: combinedValueListItems
       }
       zipElementListData.push(titleValueListElement)
+      // Инициализируем объект с атрибутами текущего элемента
+      // let nextIndex = e + 1
+      // const rItem = pickElementAttr(element, { extraPickAttrs })
+      // const newElements: Element[] = []
+      // let combinedValue = rItem.value
+
+      // while (nextIndex < elementList.length) {
+      //   const nextElement = elementList[nextIndex]
+      //   const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
+
+      //   if (
+      //     isSameElementExceptValue(rItem, nextRItem) &&
+      //     nextRItem.value !== '\n'
+      //   ) {
+      //     combinedValue += nextRItem.value
+      //     e++
+      //   } else {
+      //     break
+      //   }
+
+      //   nextIndex++
+      // }
+
+      // // Присваиваем объединенное значение
+      // rItem.value = combinedValue
+
+      // newElements.push(rItem) // Добавляем элемент в массив новых элементов
+
+      // // Если zipElementListData существует, добавляем элемент в него
+      //   zipElementListData.push(...newElements) // Используем spread-оператор для добавления всех новых элементов
       continue
     }
     // 优先处理虚拟元素，后表格、超链接、日期、控件特殊处理
@@ -610,9 +649,9 @@ export function zipElementList(
           level
         }
         const valueList: IElement[] = []
-        while (e < elementList.length) {
+        while (e <= elementList.length) {
           const titleE = elementList[e]
-          if (titleId !== titleE.titleId) {
+          if (titleE === undefined || titleId !== titleE.titleId) {
             e--
             break
           }
@@ -624,6 +663,7 @@ export function zipElementList(
         titleElement.valueList = zipElementList(valueList, options)
         element = titleElement
       }
+      // Заголовки
     } else if (element.listId && element.listType) {
       // 列表处理
       const listId = element.listId
@@ -792,17 +832,17 @@ export function zipElementList(
     // 组合元素
     // const pickElement = pickElementAttr(element, { extraPickAttrs })
     let nextIndex = e + 1
-    let id : string | undefined
+    let id: string | undefined
 
     if (element.id) {
       id = element.id
     } else if (
       element.valueList &&
-      elementList[e - element.valueList[0].value?.length - 1]?.value === ZERO
+      elementList[e - element.valueList[0].value?.length]?.value === ZERO
     ) {
       id = getUUID()
     } else if (e > 0 && elementList[e - 1].value !== ZERO) {
-      id = zipElementListData[zipElementListData.length - 1].id
+      id = zipElementListData[zipElementListData.length - 1].id || getUUID()
     } else {
       id = getUUID()
     }
@@ -819,11 +859,9 @@ export function zipElementList(
     while (nextIndex < elementList.length) {
       const nextElement = elementList[nextIndex]
       const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
-
       // Проверяем, совпадают ли атрибуты, кроме значения
       if (
-        nextRItem.size === rItem.size &&
-        nextRItem.bold === rItem.bold &&
+        isSameElementExceptValue(rItem, nextRItem) &&
         nextRItem.value !== '\n'
       ) {
         combinedValue += nextRItem.value // Объединяем значения
@@ -971,7 +1009,7 @@ export function formatElementContext(
     if (!getIsBlockElement(targetElement)) {
       cloneAttr.push(...EDITOR_ROW_ATTR)
     }
-    cloneProperty<IElement>(cloneAttr, copyElement, targetElement)
+    // cloneProperty<IElement>(cloneAttr, copyElement, targetElement)
   }
 }
 
