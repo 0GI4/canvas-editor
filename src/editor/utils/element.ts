@@ -592,48 +592,49 @@ export function zipElementList(
       //   zipElementListData.push(newElement)
       e++
       continue
-    } else if (element.titleId && !element.level) {
-      const valueListItem = pickElementAttr(element, { extraPickAttrs })
+    } else if (
+      (element.titleId && !element.level) ||
+      (element.listId && !element.listType)
+    ) {
+      const valueList = []
+      let valueListItem = pickElementAttr(element, { extraPickAttrs })
       let combinedValueListItems = ''
+
       while (elementList[e]) {
-        combinedValueListItems += elementList[e].value
+        while (e < elementList.length && elementList[e]) {
+          if (
+            isSameElementExceptValue(
+              valueListItem,
+              pickElementAttr(elementList[e], { extraPickAttrs })
+            ) &&
+            elementList[e].value !== ZERO
+          ) {
+            combinedValueListItems += elementList[e].value
+            e++
+          } else {
+            break
+          }
+        }
+
+        const valueListElement = {
+          ...valueListItem,
+          value: combinedValueListItems
+        }
+
+        // Проверяем, не пусто ли значение, прежде чем добавлять в список
+        if (combinedValueListItems.trim() !== '') {
+          valueList.push(valueListElement)
+        }
+
+        combinedValueListItems = '' // Обнуляем после добавления
         e++
+        if (e < elementList.length) {
+          valueListItem = pickElementAttr(elementList[e], { extraPickAttrs })
+        }
       }
-      const titleValueListElement = {
-        ...valueListItem,
-        value: combinedValueListItems
-      }
-      zipElementListData.push(titleValueListElement)
-      // Инициализируем объект с атрибутами текущего элемента
-      // let nextIndex = e + 1
-      // const rItem = pickElementAttr(element, { extraPickAttrs })
-      // const newElements: Element[] = []
-      // let combinedValue = rItem.value
+      zipElementListData.push(...valueList)
 
-      // while (nextIndex < elementList.length) {
-      //   const nextElement = elementList[nextIndex]
-      //   const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
-
-      //   if (
-      //     isSameElementExceptValue(rItem, nextRItem) &&
-      //     nextRItem.value !== '\n'
-      //   ) {
-      //     combinedValue += nextRItem.value
-      //     e++
-      //   } else {
-      //     break
-      //   }
-
-      //   nextIndex++
-      // }
-
-      // // Присваиваем объединенное значение
-      // rItem.value = combinedValue
-
-      // newElements.push(rItem) // Добавляем элемент в массив новых элементов
-
-      // // Если zipElementListData существует, добавляем элемент в него
-      //   zipElementListData.push(...newElements) // Используем spread-оператор для добавления всех новых элементов
+    
       continue
     }
     // 优先处理虚拟元素，后表格、超链接、日期、控件特殊处理
@@ -841,8 +842,12 @@ export function zipElementList(
       elementList[e - element.valueList[0].value?.length]?.value === ZERO
     ) {
       id = getUUID()
-    } else if (e > 0 && elementList[e - 1].value !== ZERO) {
-      id = zipElementListData[zipElementListData.length - 1].id || getUUID()
+    } else if (
+      e > 0 &&
+      elementList[e - 1].value !== ZERO &&
+      elementList[e - 1].type !== ElementType.TABLE
+    ) {
+      id = zipElementListData[zipElementListData.length - 1]?.id || getUUID()
     } else {
       id = getUUID()
     }
@@ -864,10 +869,10 @@ export function zipElementList(
         isSameElementExceptValue(rItem, nextRItem) &&
         nextRItem.value !== '\n'
       ) {
-        combinedValue += nextRItem.value // Объединяем значения
-        e++ // Увеличиваем индекс, чтобы пропустить этот элемент
+        combinedValue += nextRItem.value
+        e++
       } else {
-        break // Если атрибуты разные, прерываем цикл
+        break
       }
 
       nextIndex++
@@ -1009,7 +1014,8 @@ export function formatElementContext(
     if (!getIsBlockElement(targetElement)) {
       cloneAttr.push(...EDITOR_ROW_ATTR)
     }
-    // cloneProperty<IElement>(cloneAttr, copyElement, targetElement)
+    if (copyElement.listId)
+      cloneProperty<IElement>(cloneAttr, copyElement, targetElement)
   }
 }
 

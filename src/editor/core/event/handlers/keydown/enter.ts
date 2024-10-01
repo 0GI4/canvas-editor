@@ -77,6 +77,10 @@ export function enter(evt: KeyboardEvent, host: CanvasEvent) {
     const cursorPosition = position.getCursorPosition()
     if (!cursorPosition) return
     const { index } = cursorPosition
+    // if (isCollapsed && elementList[index - 2]?.type === ElementType.SEPARATOR) {
+    //   draw.spliceElementList(elementList, index + 1, 0, enterText) // надо добавить проверку на сноску и менять тут поведение enter для enter
+    //   draw.spliceElementList(elementList, index - 3, 1)
+    // } 
     if (isCollapsed) {
       draw.spliceElementList(elementList, index + 1, 0, enterText)
     } else {
@@ -87,7 +91,7 @@ export function enter(evt: KeyboardEvent, host: CanvasEvent) {
         enterText
       )
     }
-    curIndex = index + 1
+    curIndex = index + 1 // тут в зависимости от того удаляли или нет нужно добавлять или не добавлять элементы
   }
   if (~curIndex) {
     rangeManager.setRange(curIndex, curIndex)

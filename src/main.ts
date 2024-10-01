@@ -46,18 +46,9 @@ window.onload = function () {
           size: 18,
           rowFlex: RowFlex.CENTER
         },
-        {
-          value: '\n',
-          type: ElementType.SEPARATOR
-        }
       ],
       main: <IElement[]>data,
-      footer: [
-        {
-          value: 'canvas-editor',
-          size: 12
-        }
-      ]
+      footer: []
     },
     options
   )
@@ -301,6 +292,16 @@ window.onload = function () {
   rightDom.onclick = function () {
     console.log('right')
     instance.command.executeRowFlex(RowFlex.RIGHT)
+  }
+
+  const footnoteDom = document.querySelector<HTMLDivElement>(
+    '.menu-item__footnote'
+  )!
+  footnoteDom.title = `Сноска(${isApple ? '⌘' : 'Ctrl'}+N)`
+  footnoteDom.onclick = function () {
+    console.log('footnote')
+    debugger
+    instance.command.executeFootnote()
   }
 
   const alignmentDom = document.querySelector<HTMLDivElement>(
@@ -1732,8 +1733,6 @@ window.onload = function () {
   }
   instance.listener.contentChange = debounce(handleContentChange, 200)
   handleContentChange()
-
-
 
   instance.listener.saved = function (payload) {
     instance.command.getValue()

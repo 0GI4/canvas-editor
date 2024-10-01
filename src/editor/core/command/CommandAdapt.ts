@@ -122,6 +122,7 @@ export class CommandAdapt {
   private searchManager: Search
   private i18n: I18n
   private zone: Zone
+  private footnoteCounter = 0
 
   constructor(draw: Draw) {
     this.draw = draw
@@ -334,6 +335,119 @@ export class CommandAdapt {
       })
     })
     this.draw.render(renderOption)
+  }
+
+  // public footnote() {
+  //   const isDisabled = this.draw.isReadonly() || this.draw.isDisabled()
+  //   if (isDisabled) return
+  //   const position = this.draw.getPosition()
+  //   const cursorPosition = position.getCursorPosition()
+  //   if (!cursorPosition) return
+  //   const rangeManager = this.draw.getRange()
+  //   if (!rangeManager.getIsCanInput()) return
+
+  //   const cursor = this.draw.getCursor()
+  //   cursor.clearAgentDomValue()
+  // }
+
+  public footnote() {
+    const isDisabled = this.draw.isReadonly() || this.draw.isDisabled()
+    if (isDisabled) return
+
+    const position = this.draw.getPosition()
+    const cursorPosition = position.getCursorPosition()
+    if (!cursorPosition) return
+
+    const rangeManager = this.draw.getRange()
+    if (!rangeManager.getIsCanInput()) return
+
+    const cursor = this.draw.getCursor()
+    cursor.clearAgentDomValue()
+
+    const elementList = this.draw.getElementList()
+    const { startIndex, endIndex } = rangeManager.getRange()
+
+    const footnoteNumber = this.getNextFootnoteNumber()
+    const footnoteElement: IElement = {
+      value: String(footnoteNumber),
+      type: ElementType.SUPERSCRIPT,
+      id: getUUID()
+      // superscript: true
+    }
+
+    const start = startIndex + 1
+    if (startIndex !== endIndex) {
+      this.draw.spliceElementList(elementList, start, endIndex - startIndex)
+    }
+
+    this.draw.spliceElementList(elementList, start, 0, footnoteElement)
+
+    // let i = 0
+    if (footnoteNumber === 1) {
+      const pageNumber = this.draw.getPageNo()
+      let nextPageNumber = this.draw.getPageNo()
+      while (pageNumber === nextPageNumber) {
+        const separator: IElement = {
+          value: ZERO
+        }
+        this.draw.spliceElementList(
+          elementList,
+          elementList.length,
+          0,
+          separator
+        )
+        this.draw.render()
+        nextPageNumber = this.draw.getPosition().getMainPositionList()[
+          this.draw.getPosition().getMainPositionList().length - 1
+        ].pageNo
+        // i++
+      }
+
+      this.draw.spliceElementList(elementList, elementList.length - 2, 2)
+
+      const separator: IElement = {
+        dashArray: [],
+        type: ElementType.SEPARATOR,
+        value: '\n',
+        width: 554
+      }
+      this.draw.spliceElementList(elementList, elementList.length, 0, separator)
+    }
+
+    const zero: IElement = {
+      value: ZERO
+    }
+    this.draw.spliceElementList(elementList, elementList.length, 0, zero)
+
+    const footnoteElement2: IElement = {
+      value: `${footnoteNumber}`,
+      type: ElementType.SUPERSCRIPT,
+      id: getUUID()
+    }
+
+    this.draw.spliceElementList(
+      elementList,
+      elementList.length,
+      0,
+      footnoteElement2
+    )
+
+    rangeManager.setRange(elementList.length - 1, elementList.length - 1)
+    this.draw.render({
+      curIndex: elementList.length - 1,
+      isSubmitHistory: true
+    })
+    console.log(createDomFromElementList(elementList, this.options))
+    console.log(this.draw.getPosition().getCursorPosition()?.pageNo)
+  }
+
+  private getNextFootnoteNumber(): number {
+    if (!this.footnoteCounter) {
+      this.footnoteCounter = 1
+    } else {
+      this.footnoteCounter += 1
+    }
+    return this.footnoteCounter
   }
 
   public font(payload: string) {

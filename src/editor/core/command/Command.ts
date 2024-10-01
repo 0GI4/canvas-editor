@@ -18,6 +18,7 @@ export class Command {
   public executePainter: CommandAdapt['painter']
   public executeApplyPainterStyle: CommandAdapt['applyPainterStyle']
   public executeFormat: CommandAdapt['format']
+  public executeFootnote: CommandAdapt['footnote']
   public executeFont: CommandAdapt['font']
   public executeSize: CommandAdapt['size']
   public executeSizeAdd: CommandAdapt['sizeAdd']
@@ -139,6 +140,7 @@ export class Command {
     this.executeApplyPainterStyle = adapt.applyPainterStyle.bind(adapt)
     this.executeFormat = adapt.format.bind(adapt)
     // 字体、字体大小、字体变大、字体变小、加粗、斜体、下划线、删除线、字体颜色、背景色
+    this.executeFootnote = adapt.footnote.bind(adapt)
     this.executeFont = adapt.font.bind(adapt)
     this.executeSize = adapt.size.bind(adapt)
     this.executeSizeAdd = adapt.sizeAdd.bind(adapt)
